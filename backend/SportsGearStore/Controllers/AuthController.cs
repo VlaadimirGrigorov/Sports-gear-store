@@ -70,7 +70,9 @@ public class AuthController : ControllerBase
         {
             Username = dto.Username,
             Useremail = dto.Email,
-            Password = passwordHash
+            Password = passwordHash,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName
         };
 
         _context.Users.Add(user);
