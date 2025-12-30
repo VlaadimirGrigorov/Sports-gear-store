@@ -87,6 +87,12 @@ namespace SportsGearStore
                 };
             });
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanSubmitQuestionnaire", policy =>
+                    policy.RequireClaim("permission", "questionnaire.submit"));
+            });
+
             // CORS Policy
             builder.Services.AddCors(options =>
             {

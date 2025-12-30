@@ -21,8 +21,9 @@ public class UserProfileController : ControllerBase
     }
 
     // CREATE or UPDATE PROFILE
-    [HttpPost]
-    public async Task<IActionResult> SaveProfile(UserProfileQuestionnaireDTO dto)
+    [Authorize(Policy = "CanSubmitQuestionnaire")]
+    [HttpPost("create")]
+    public async Task<IActionResult> SaveProfile(QuestionnaireQuestionTagsDTO dto)
     {
         var userId = GetUserId();
         if (userId == null)
@@ -32,23 +33,39 @@ public class UserProfileController : ControllerBase
 
         // 1️⃣ Profile (upsert)
         var profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        int profileId;
 
-        if (profile == null)
+        if (profile != null)
         {
-            profile = new UserProfile
-            {
-                UserId = userId.Value
-            };
-            _context.UserProfiles.Add(profile);
+            return StatusCode(StatusCodes.Status403Forbidden, "User already has a profile");
         }
 
-        profile.Age = dto.Age;
-        profile.Weight = dto.Weight;
-        profile.Height = dto.Height;
+        profile = new UserProfile
+        {
+            UserId = userId.Value
+        };
+
+        _context.UserProfiles.Add(profile);
 
         await _context.SaveChangesAsync();
+        profileId = profile.Id;
 
-        await UpdateUserProfileTags(profile.Id, dto);
+        var questionnaireQuestionTagLabels = dto.QuestionnaireQuestionTags;
+
+        var matchingTags = await _context.Tags
+            .Where(t => questionnaireQuestionTagLabels.Contains(t.Name))
+            .ToListAsync();
+
+        foreach(var tag in matchingTags)
+        {
+            _context.UserProfileTags.Add(new UserProfileTag
+            {
+                UserProfileId = profileId,
+                TagId = tag.Id
+            });
+        }
+
+        await _context.SaveChangesAsync();
 
         return Ok("Profile saved successfully.");
     }
@@ -57,39 +74,9 @@ public class UserProfileController : ControllerBase
     private int? GetUserId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+        new Claim("permission", "questionnaire.submit");
         if (claim == null) return null;
 
         return int.TryParse(claim.Value, out var id) ? id : null;
-    }
-
-    private async Task UpdateUserProfileTags(int userProfileId, UserProfileQuestionnaireDTO dto)
-    {
-        // махаме старите тагове
-        var existing = _context.UserProfileTags.Where(upt => upt.UserProfileId == userProfileId);
-
-        _context.UserProfileTags.RemoveRange(existing);
-
-        // новите тагове (по име)
-        var tagNames = new[]
-        {
-            dto.Goal,
-            dto.Level,
-            dto.TrainingPlace
-        };
-
-        var tags = await _context.Tags
-            .Where(t => tagNames.Contains(t.Name))
-            .ToListAsync();
-
-        foreach (var tag in tags)
-        {
-            _context.UserProfileTags.Add(new UserProfileTag
-            {
-                UserProfileId = userProfileId,
-                TagId = tag.Id
-            });
-        }
-
-        await _context.SaveChangesAsync();
     }
 }

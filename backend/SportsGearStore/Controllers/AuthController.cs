@@ -34,7 +34,7 @@ namespace SportsGearStore.Controllers
             {
                 return Unauthorized("Invalid username.");
             }
-    
+
             // Проверяваме дали подадената парола съвпада с хеша в базата
             var incomingHash = GenericHelpers.ComputeSha256Hash(dto.Password);
             if (incomingHash != user.Password)
@@ -88,7 +88,8 @@ namespace SportsGearStore.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("permission", "questionnaire.submit"),
                 };
     
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey));
