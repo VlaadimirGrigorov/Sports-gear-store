@@ -47,10 +47,9 @@ namespace SportsGearStore.Controllers
                 return BadRequest("Search term cannot be empty.");
             }
     
-            var products = await _context.Products
-                .Where(p =>
-                    p.Name.ToLower().Contains(name.ToLower()))
-                .ToListAsync();
+            var products = _context.Products
+            .Where(p => p.Name.ToLower().StartsWith(name.ToLower()))
+            .ToList();
     
             return Ok(products);
         }
@@ -140,7 +139,8 @@ namespace SportsGearStore.Controllers
 
             if (profile == null)
             {
-                return Ok(new List<object>());
+                var defaultProducts = _context.Products.ToListAsync();
+                return Ok(defaultProducts);
             }
 
             // 2️⃣ user tags
@@ -148,11 +148,6 @@ namespace SportsGearStore.Controllers
                 .Where(upt => upt.UserProfileId == profile.Id)
                 .Select(upt => upt.TagId)
                 .ToListAsync();
-
-            if (!userTagIds.Any())
-            {
-                return Ok(new List<object>());
-            }
 
             // 3️⃣ matching
             var matches = await _context.ProductTags
@@ -164,7 +159,6 @@ namespace SportsGearStore.Controllers
                     MatchScore = g.Count()
                 })
                 .OrderByDescending(x => x.MatchScore)
-                .Take(10)
                 .ToListAsync();
 
             var productIds = matches.Select(m => m.ProductId).ToList();
@@ -179,7 +173,6 @@ namespace SportsGearStore.Controllers
                 p.Name,
                 p.Description,
                 p.Price,
-                MatchScore = matches.First(m => m.ProductId == p.Id).MatchScore
             });
 
             return Ok(result);
