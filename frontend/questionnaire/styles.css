@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+}
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+    width: 300px;
+}
+h2 {
+    text-align: center;
+    color: #333;
+}
+.questionnaire-content {
+    height: max-content;
+    display: block;
+}
+.questionnaire-buttons{
+    display: flex;
+}

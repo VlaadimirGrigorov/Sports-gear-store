@@ -1,0 +1,168 @@
+[
+  {
+    "label": "What is your main fitness goal?",
+    "answers": [
+      {
+        "answerValue": "Lose weight",
+        "answerTags": ["weight_loss", "cardio"]
+      },
+      {
+        "answerValue": "Build muscle",
+        "answerTags": ["muscle_gain", "strength"]
+      },
+      {
+        "answerValue": "Improve endurance",
+        "answerTags": ["endurance", "cardio"]
+      }
+    ]
+  },
+  {
+    "label": "What is your current fitness level?",
+    "answers": [
+      {
+        "answerValue": "Beginner",
+        "answerTags": ["beginner"]
+      },
+      {
+        "answerValue": "Intermediate",
+        "answerTags": ["intermediate"]
+      },
+      {
+        "answerValue": "Advanced",
+        "answerTags": ["advanced"]
+      }
+    ]
+  },
+  {
+    "label": "Where do you usually train?",
+    "answers": [
+      {
+        "answerValue": "At home",
+        "answerTags": ["home_workout"]
+      },
+      {
+        "answerValue": "At the gym",
+        "answerTags": ["gym_workout"]
+      }
+    ]
+  },
+  {
+    "label": "What type of workouts do you prefer?",
+    "answers": [
+      {
+        "answerValue": "Cardio workouts",
+        "answerTags": ["cardio", "weight_loss"]
+      },
+      {
+        "answerValue": "Strength training",
+        "answerTags": ["strength", "muscle_gain"]
+      },
+      {
+        "answerValue": "Mobility & recovery",
+        "answerTags": ["mobility"]
+      }
+    ]
+  },
+  {
+    "label": "How often do you train per week?",
+    "answers": [
+      {
+        "answerValue": "1–2 times",
+        "answerTags": ["beginner"]
+      },
+      {
+        "answerValue": "3–4 times",
+        "answerTags": ["intermediate"]
+      },
+      {
+        "answerValue": "5+ times",
+        "answerTags": ["advanced"]
+      }
+    ]
+  },
+  {
+    "label": "Which equipment do you prefer?",
+    "answers": [
+      {
+        "answerValue": "Bodyweight / minimal equipment",
+        "answerTags": ["home_workout", "beginner"]
+      },
+      {
+        "answerValue": "Free weights",
+        "answerTags": ["strength", "gym_workout"]
+      },
+      {
+        "answerValue": "Machines & cardio equipment",
+        "answerTags": ["cardio", "gym_workout"]
+      }
+    ]
+  },
+  {
+    "label": "What matters most to you in training?",
+    "answers": [
+      {
+        "answerValue": "Burning calories",
+        "answerTags": ["weight_loss", "cardio"]
+      },
+      {
+        "answerValue": "Gaining strength",
+        "answerTags": ["strength", "muscle_gain"]
+      },
+      {
+        "answerValue": "Flexibility & recovery",
+        "answerTags": ["mobility"]
+      }
+    ]
+  },
+  {
+    "label": "How intense do you like your workouts?",
+    "answers": [
+      {
+        "answerValue": "Light intensity",
+        "answerTags": ["beginner", "mobility"]
+      },
+      {
+        "answerValue": "Moderate intensity",
+        "answerTags": ["intermediate"]
+      },
+      {
+        "answerValue": "High intensity",
+        "answerTags": ["advanced", "endurance"]
+      }
+    ]
+  },
+  {
+    "label": "What kind of training sessions do you enjoy most?",
+    "answers": [
+      {
+        "answerValue": "Short and efficient workouts",
+        "answerTags": ["home_workout", "cardio"]
+      },
+      {
+        "answerValue": "Structured gym sessions",
+        "answerTags": ["gym_workout", "strength"]
+      },
+      {
+        "answerValue": "Stretching and recovery sessions",
+        "answerTags": ["mobility"]
+      }
+    ]
+  },
+  {
+    "label": "What is your long-term fitness focus?",
+    "answers": [
+      {
+        "answerValue": "Staying fit and healthy",
+        "answerTags": ["cardio", "mobility"]
+      },
+      {
+        "answerValue": "Building an athletic body",
+        "answerTags": ["muscle_gain", "strength"]
+      },
+      {
+        "answerValue": "Improving performance",
+        "answerTags": ["endurance", "advanced"]
+      }
+    ]
+  }
+]

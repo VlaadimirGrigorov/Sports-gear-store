@@ -101,6 +101,7 @@ namespace SportsGearStore
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<SportsGearStoreDbContext>();
+                TagSeeder.Seed(context);
                 DataSeeder.Seed(context);
             }
 
