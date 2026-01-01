@@ -6,20 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
   </head>
-  <body>
+  <!-- <body>
     <div id="app">
       <div style="max-width: 720px; margin: 40px auto; font-family: system-ui;">
         <h1>SportsGearStore</h1>
-        <p>✅ Frontend работи. ✅ Имаш токен. Следва: страници/функционалност.</p>
         <div style="display:flex; gap: 12px; margin-top: 16px;">
           <button id="logoutBtn" type="button">Logout</button>
-          <a href="/login-page/index.html">Login page</a>
         </div>
       </div>
       <div>
         <button id="questionnaireBtn">Fill Questionnaire</button>
       </div>
+      <div style="max-width: 720px; margin: 24px auto 0; font-family: system-ui;">
+        <h2 id="productsTitle" style="margin: 0 0 12px 0;">Products</h2>
+        <div id="products"></div>
+      </div>
     </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body> -->
+  <body>
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar__spacer"></div>
+      <h1 class="topbar__title">SportsGearStore</h1>
+
+      <div class="topbar__actions">
+        <button id="cartBtn" class="btn btn--icon" type="button" aria-label="Cart">
+          🛍️
+          <span id="cartCount" class="cartBadge">0</span>
+        </button>
+
+        <button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="page">
+      <h2 id="productsTitle" class="sectionTitle">All products</h2>
+      <div id="products"></div>
+    </main>
+
+    <!-- Bottom-left fixed questionnaire button -->
+    <button id="questionnaireBtn" class="btn btn--fixed" type="button">
+      Fill Questionnaire
+    </button>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

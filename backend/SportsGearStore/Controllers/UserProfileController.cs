@@ -20,7 +20,6 @@ public class UserProfileController : ControllerBase
         _context = context;
     }
 
-    // CREATE or UPDATE PROFILE
     [Authorize(Policy = "CanSubmitQuestionnaire")]
     [HttpPost("create")]
     public async Task<IActionResult> SaveProfile(QuestionnaireQuestionTagsDTO dto)
@@ -31,7 +30,6 @@ public class UserProfileController : ControllerBase
             return Unauthorized();
         }
 
-        // 1️⃣ Profile (upsert)
         var profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
         int profileId;
 
@@ -70,7 +68,6 @@ public class UserProfileController : ControllerBase
         return Ok("Profile saved successfully.");
     }
 
-    // HELPERS
     private int? GetUserId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier);

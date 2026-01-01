@@ -9,7 +9,6 @@ type Question = {
 }
 
 const token = localStorage.getItem('authToken')
-console.log(token)
 if (!token) throw new Error('No token found (user not logged in)')
 
 const container = document.getElementById('questionnaire')
@@ -25,6 +24,43 @@ let currentQuestionCount = 0
 cancelBtn.addEventListener('click', () => {
   // go back home (change if you want another page)
   window.location.href = '/'
+})
+
+submitBtn.addEventListener('click', async () => {
+  const ok = validateAll(currentQuestionCount)
+  if (!ok) return
+
+  const answers = collectAnswers(currentQuestionCount)
+
+  // ✅ combine all tags from chosen answers
+  const combinedTags = Array.from(
+    new Set(answers.flatMap((a) => a.answerTags)) // remove duplicates
+  )
+
+  const dto = {
+    questionnaireQuestionTags: combinedTags,
+  }
+
+  try {
+    const res = await fetch('https://localhost:7110/api/user-profile/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(dto),
+    })
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      throw new Error(`Submit failed (${res.status}). ${text}`)
+    }
+
+    // optional: navigate away after success
+    window.location.href = '/?product-recommended'
+  } catch (e) {
+    alert((e as Error).message)
+  }
 })
 
 submitBtn.addEventListener('click', async () => {
@@ -151,41 +187,4 @@ function escapeHtml(s: string) {
 
 loadQuestions().catch((e) => {
   container.innerHTML = `<p style="color:red;">${(e as Error).message}</p>`
-})
-
-submitBtn.addEventListener('click', async () => {
-  const ok = validateAll(currentQuestionCount)
-  if (!ok) return
-
-  const answers = collectAnswers(currentQuestionCount)
-
-  // ✅ combine all tags from chosen answers
-  const combinedTags = Array.from(
-    new Set(answers.flatMap((a) => a.answerTags)) // remove duplicates
-  )
-
-  const dto = {
-    questionnaireQuestionTags: combinedTags,
-  }
-
-  try {
-    const res = await fetch('https://localhost:7110/api/user-profile/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(dto),
-    })
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => '')
-      throw new Error(`Submit failed (${res.status}). ${text}`)
-    }
-
-    // optional: navigate away after success
-    window.location.href = '/'
-  } catch (e) {
-    alert((e as Error).message)
-  }
 })
