@@ -4,6 +4,9 @@ import { requireAuth, logout } from './auth'
 // Тази страница (/) приемаме, че е "защитена" – трябва да си логнат.
 requireAuth()
 
+let lastLoadedProducts: Product[] = []
+let lastLoadedTitle = 'All products'
+
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
   logout()
   window.location.href = '/login-page/index.html'
@@ -11,6 +14,14 @@ document.getElementById('logoutBtn')?.addEventListener('click', () => {
 
 document.getElementById('questionnaireBtn')?.addEventListener('click', () => {
   window.location.href = '/questionnaire/questionnaire.html'
+})
+
+document.getElementById('cartBtn')?.addEventListener('click', () => {
+  window.location.href = '/cart/cart.html'
+})
+
+document.getElementById('ordersBtn')?.addEventListener('click', () => {
+  window.location.href = '/orders/orders.html'
 })
 
 /**
@@ -37,14 +48,46 @@ function getDisplayPrice(p: Product): string | null {
   return String(price)
 }
 
-function getDisplayImage(p: Product): string | null {
-  const img = p['imageUrl'] ?? p['imageURL'] ?? p['image'] ?? p['ImageUrl'] ?? p['ImageURL']
-  if (!img) return null
-  return String(img)
-}
-
 function renderProducts(title: string, products: Product[]) {
+  lastLoadedTitle = title
+  lastLoadedProducts = products
+
+  const token = localStorage.getItem('authToken')
+  if (!token) throw new Error('No token found (user not logged in)')
+
   if (!productsEl) return
+  
+  productsEl?.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement
+    const btn = target.closest<HTMLButtonElement>('.addToCartBtn')
+    if (!btn) return
+
+    const productId = btn.dataset.productid
+
+    if (!productId) {
+      alert('Missing productId on button. Check renderProducts().')
+      return
+    }
+
+    const res = await fetch(`https://localhost:7110/api/cart/add?productId=${encodeURIComponent(productId)}&quantity=1`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '')
+      alert(`Add to cart failed (${res.status}). ${errText}`)
+      return
+    }
+
+    await refreshCartBadge()
+  })
+
   if (productsTitleEl) productsTitleEl.textContent = title
 
   if (!products.length) {
@@ -67,12 +110,41 @@ function renderProducts(title: string, products: Product[]) {
             <p class="productCategory">${category}</p>
             <p class="productDesc">${desc}</p>
             <div class="productPrice">${priceText}</div>
-            <button class="addToCartBtn" type="button">Add to Cart</button>
+            <button class="addToCartBtn" type="button" data-productid="${String(p['id'] ?? p['Id'] ?? p['productId'] ?? '')}">
+              Add to Cart
+            </button>
           </div>
         `
       }).join('')}
     </div>
   `
+}
+
+async function refreshCartBadge() {
+  const badge = document.getElementById('cartCount')
+  if (!badge) return
+
+  const token = localStorage.getItem('token')
+
+  const res = await fetch('https://localhost:7110/api/cart', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) {
+    // if unauthorized or error, just show 0
+    badge.textContent = '0'
+    return
+  }
+
+  const cart = await res.json()
+  const items = (cart.items ?? cart.Items ?? []) as any[]
+  const totalQty = items.reduce((sum, it) => sum + (it.quantity ?? it.Quantity ?? 0), 0)
+
+  badge.textContent = String(totalQty)
 }
 
 function escapeHtml(s: string) {
@@ -130,6 +202,63 @@ async function loadRecommendedProducts() {
   renderProducts('Recommended products', products ?? [])
 }
 
+const searchInput = document.getElementById('productSearch') as HTMLInputElement | null
+
+let searchTimer: number | undefined
+let searchAbort: AbortController | null = null
+
+searchInput?.addEventListener('input', () => {
+  // debounce (wait until user stops typing)
+  if (searchTimer) window.clearTimeout(searchTimer)
+
+  searchTimer = window.setTimeout(async () => {
+    const q = searchInput.value.trim()
+
+    // If empty -> load all products again
+    if (!q) {
+      await loadAllProducts()
+      return
+    }
+
+    // cancel previous request
+    if (searchAbort) searchAbort.abort()
+    searchAbort = new AbortController()
+
+    if (productsEl) productsEl.innerHTML = 'Searching...'
+
+    const token = localStorage.getItem('token')
+
+    // ✅ adjust query parameter name if your BE expects different
+    const url = `https://localhost:7110/api/products/search?name=${encodeURIComponent(q)}`
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        signal: searchAbort.signal,
+      })
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '')
+        if (productsEl) {
+          productsEl.innerHTML = `<p style="color:#b00020;">Search failed (${res.status}). ${escapeHtml(errText)}</p>`
+        }
+        return
+      }
+
+      const products = (await res.json()) as Product[]
+      renderProducts(`Search results for "${q}"`, products ?? [])
+    } catch (e) {
+      // ignore abort errors (user typed again)
+      if ((e as any)?.name === 'AbortError') return
+      if (productsEl) productsEl.innerHTML = `<p style="color:#b00020;">Search request failed.</p>`
+    }
+  }, 300) // 300ms debounce
+})
+
 async function initProductsFromRedirectFlag() {
   if (!productsEl) return
 
@@ -149,4 +278,6 @@ async function initProductsFromRedirectFlag() {
 }
 
 void initProductsFromRedirectFlag()
+
+void refreshCartBadge()
 

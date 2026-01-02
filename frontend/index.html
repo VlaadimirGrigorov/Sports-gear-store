@@ -6,31 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
   </head>
-  <!-- <body>
-    <div id="app">
-      <div style="max-width: 720px; margin: 40px auto; font-family: system-ui;">
-        <h1>SportsGearStore</h1>
-        <div style="display:flex; gap: 12px; margin-top: 16px;">
-          <button id="logoutBtn" type="button">Logout</button>
-        </div>
-      </div>
-      <div>
-        <button id="questionnaireBtn">Fill Questionnaire</button>
-      </div>
-      <div style="max-width: 720px; margin: 24px auto 0; font-family: system-ui;">
-        <h2 id="productsTitle" style="margin: 0 0 12px 0;">Products</h2>
-        <div id="products"></div>
-      </div>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body> -->
   <body>
     <!-- Top bar -->
     <header class="topbar">
-      <div class="topbar__spacer"></div>
       <h1 class="topbar__title">SportsGearStore</h1>
 
+      <input
+        id="productSearch"
+        class="searchInput"
+        type="search"
+        placeholder="Search products..."
+        autocomplete="off"
+      />
+
       <div class="topbar__actions">
+        <button id="ordersBtn" class="btn btn--ghost" type="button">My orders</button>
+        
         <button id="cartBtn" class="btn btn--icon" type="button" aria-label="Cart">
           🛍️
           <span id="cartCount" class="cartBadge">0</span>
@@ -38,7 +29,7 @@
 
         <button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button>
       </div>
-    </header>
+    </header>   
 
     <!-- Main content -->
     <main class="page">

@@ -15,6 +15,10 @@ namespace SportsGearStore.Data
         public DbSet<ProductTag> ProductTags => Set<ProductTag>();
         public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
         public DbSet<UserProfileTag> UserProfileTags => Set<UserProfileTag>();
+        public DbSet<Cart> Carts => Set<Cart>();
+        public DbSet<CartItem> CartItems => Set<CartItem>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
