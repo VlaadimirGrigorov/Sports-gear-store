@@ -24,6 +24,14 @@ document.getElementById('ordersBtn')?.addEventListener('click', () => {
   window.location.href = '/orders/orders.html'
 })
 
+document.getElementById('homeBtn')?.addEventListener('click', () => {
+  window.location.href = '/'
+})
+
+document.getElementById('userInfoBtn')?.addEventListener('click', () => {
+  window.location.href = '/user-info/index.html'
+})
+
 /**
  * След връщане от Questionnaire:
  * - /?products=all => зареждаме всички продукти

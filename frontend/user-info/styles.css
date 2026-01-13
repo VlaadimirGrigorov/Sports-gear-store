@@ -1,0 +1,15 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#userInfo {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+}
