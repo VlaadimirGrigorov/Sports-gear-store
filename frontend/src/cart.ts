@@ -15,30 +15,34 @@ let cartItems: { productId: number; quantity: number }[] = []
 const checkoutBtn = document.getElementById('checkoutBtn') as HTMLButtonElement | null
 
 checkoutBtn?.addEventListener('click', async () => {
-  const token = localStorage.getItem('authToken')
-  if (!token) {
-    alert('Missing token. Please login again.')
-    return
-  }
+    const token = localStorage.getItem('authToken') // при теб ключът е authToken (виж config.ts)
+    if (!token) {
+        alert('Please login first.')
+        window.location.href = '/login-page/index.html'
+        return
+    }
 
-  const res = await fetch('https://localhost:7110/api/orders', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
+    const res = await fetch('https://localhost:7110/api/checkout/create-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    })
 
-  if (!res.ok) {
-    const errText = await res.text().catch(() => '')
-    alert(`Checkout failed (${res.status}). ${errText}`)
-    return
-  }
+    if (!res.ok) {
+        const txt = await res.text()
+        alert(txt || 'Checkout failed.')
+        return
+    }
 
-  alert('Order created successfully!')
+    const data = await res.json()
+    if (!data?.url) {
+        alert('Missing Stripe session URL.')
+        return
+    }
 
-  // backend clears cart, so refresh cart view:
-  window.location.href = '/orders/orders.html'
+    window.location.href = data.url
 })
 
 async function loadCartPage() {

@@ -5,6 +5,7 @@ using SportsGearStore.Data;
 using SportsGearStore.Helpers;
 using System;
 using System.Text;
+using Stripe;
 
 namespace SportsGearStore
 {
@@ -102,6 +103,9 @@ namespace SportsGearStore
                                     .AllowAnyMethod());
             });
 
+            var stripeSecret = builder.Configuration["Stripe:SecretKey"];
+            StripeConfiguration.ApiKey = stripeSecret;
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -126,6 +130,7 @@ namespace SportsGearStore
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
 
             app.MapControllers();
 

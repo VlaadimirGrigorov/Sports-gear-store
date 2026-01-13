@@ -48,6 +48,34 @@ function getDisplayPrice(p: Product): string | null {
   return String(price)
 }
 
+function getDisplayImageUrl(p: Product): string | null {
+  const raw =
+    (p['imageUrl'] ??
+      p['ImageUrl'] ??
+      p['image'] ??
+      p['Image'] ??
+      p['photoUrl'] ??
+      p['PhotoUrl'] ??
+      p['imagePath'] ??
+      p['ImagePath']) as unknown
+
+  if (!raw) return null
+
+  const s = String(raw).trim()
+  if (!s) return null
+
+  // already absolute
+  if (s.startsWith('http://') || s.startsWith('https://')) return s
+
+  // relative path from backend (best case)
+  if (s.startsWith('/')) return `https://localhost:7110${s}`
+
+  // filename-only fallback (adjust folder if needed)
+  // If your backend serves images from /images/, change this to:
+  // return `https://localhost:7110/images/${s}`
+  return `https://localhost:7110/${s}`
+}
+
 function renderProducts(title: string, products: Product[]) {
   lastLoadedTitle = title
   lastLoadedProducts = products
@@ -103,14 +131,17 @@ function renderProducts(title: string, products: Product[]) {
         const desc = escapeHtml(String(p['description'] ?? p['Description'] ?? ''))
         const price = getDisplayPrice(p)
         const priceText = price ? `$${escapeHtml(price)}` : ''
+        const imgUrl = getDisplayImageUrl(p)
 
-        return `
+        return `        
           <div class="productCard">
+            ${imgUrl ? `<img class="productImg" src="${escapeHtml(imgUrl)}" alt="${name}" />` : ''}
             <h3 class="productName">${name}</h3>
             <p class="productCategory">${category}</p>
             <p class="productDesc">${desc}</p>
             <div class="productPrice">${priceText}</div>
-            <button class="addToCartBtn" type="button" data-productid="${String(p['id'] ?? p['Id'] ?? p['productId'] ?? '')}">
+            <button class="addToCartBtn" type="button"
+              data-productid="${String(p['id'] ?? p['Id'] ?? p['productId'] ?? '')}">
               Add to Cart
             </button>
           </div>
