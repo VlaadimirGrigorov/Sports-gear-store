@@ -56,30 +56,20 @@ namespace SportsGearStore.Controllers
 
         // ADMIN ENDPOINTS
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
         {
-            if (!IsAdmin())
-            {
-                return Forbid();
-            }
-
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Product updatedProduct)
         {
-            if (!IsAdmin())
-            {
-                return Forbid();
-            }
-
             if (id != updatedProduct.Id)
             {
                 return BadRequest();
@@ -100,15 +90,10 @@ namespace SportsGearStore.Controllers
             return NoContent();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!IsAdmin())
-            {
-                return Forbid();
-            }
-
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -178,17 +163,5 @@ namespace SportsGearStore.Controllers
             return Ok(result);
         }
 
-        // HELPERS
-        private bool IsAdmin()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return false;
-            }
-
-            var user = _context.Users.Find(int.Parse(userId));
-            return user?.IsAdmin == true;
-        }
     }
 }

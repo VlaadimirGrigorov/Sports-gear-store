@@ -1,4 +1,4 @@
-import { BACKEND_BASE_URL, STORAGE_KEYS } from './config'
+import { getBackendBaseUrl, STORAGE_KEYS } from './config'
 
 type ApiResult<T> =
   | { ok: true; data: T }
@@ -27,7 +27,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     headers.set('Authorization', `Bearer ${token}`)
   }
 
-  const url = `${BACKEND_BASE_URL}/api${path.startsWith('/') ? '' : '/'}${path}`
+  const url = `${getBackendBaseUrl()}/api${path.startsWith('/') ? '' : '/'}${path}`
 
   try {
     const res = await fetch(url, { ...options, headers })

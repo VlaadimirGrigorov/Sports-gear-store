@@ -1,5 +1,5 @@
 import { apiFetch } from './api'
-import { setBackendBaseUrl as setBaseUrl, STORAGE_KEYS } from './config'
+import { setBackendBaseUrl as setBaseUrl, STORAGE_KEYS, getBackendBaseUrl } from './config'
 
 // Показваме тези функции и за страниците login/register.
 export function setBackendBaseUrl(url: string) {
@@ -18,6 +18,22 @@ export function logout(opts: { redirect?: boolean } = { redirect: true }) {
   localStorage.removeItem(STORAGE_KEYS.authToken)
   if (opts.redirect) {
     window.location.href = '/login-page/index.html'
+  }
+}
+
+export async function isAdmin(): Promise<boolean> {
+  const token = getToken();
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const res = await apiFetch<{ role?: string }>('/userprofile');
+    // Check if the user has the 'Admin' role. Adjust the role name if your backend uses a different one.
+    return res.ok && res.data.role === 'Admin';
+  } catch (error) {
+    console.error('Failed to fetch user profile:', error);
+    return false;
   }
 }
 

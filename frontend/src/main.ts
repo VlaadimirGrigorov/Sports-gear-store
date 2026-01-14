@@ -1,5 +1,5 @@
 import './style.css'
-import { requireAuth, logout } from './auth'
+import { requireAuth, logout, isAdmin } from './auth'
 
 // Тази страница (/) приемаме, че е "защитена" – трябва да си логнат.
 requireAuth()
@@ -320,3 +320,23 @@ void initProductsFromRedirectFlag()
 
 void refreshCartBadge()
 
+async function addAdminButton() {
+    if (await isAdmin()) {
+        const topbarActions = document.querySelector('.topbar__actions');
+        if (topbarActions) {
+            const adminButton = document.createElement('button');
+            adminButton.id = 'adminBtn';
+            adminButton.className = 'btn btn--ghost';
+            adminButton.type = 'button';
+            adminButton.textContent = 'Admin';
+            adminButton.addEventListener('click', () => {
+                window.location.href = '/admin/';
+            });
+            topbarActions.insertBefore(adminButton, topbarActions.firstChild);
+        }
+    }
+}
+
+(window as any).addAdminButton = addAdminButton;
+
+void addAdminButton();

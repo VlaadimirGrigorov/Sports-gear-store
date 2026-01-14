@@ -11,8 +11,12 @@ export const STORAGE_KEYS = {
 
 // По подразбиране – твоя бекенд.
 // СМЕНИ порта да съвпада с ASP.NET ("Now listening on: https://localhost:XXXX").
-export let BACKEND_BASE_URL = 'https://localhost:7110'
+let BACKEND_BASE_URL = 'https://localhost:7110'
 
 export function setBackendBaseUrl(url: string) {
   BACKEND_BASE_URL = url.replace(/\/$/, '')
+}
+
+export function getBackendBaseUrl(): string {
+  return BACKEND_BASE_URL;
 }
